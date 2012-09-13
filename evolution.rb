@@ -28,6 +28,9 @@ end
 data = ""
 data += "iteration, maximum fitness\n"
 
+last_percentage = 0.0
+diff = 9
+
 @iterations.times do |i|
 	# calculate fitness for population
 	@population.map! do |genome|
@@ -55,7 +58,15 @@ data += "iteration, maximum fitness\n"
 	new_population = gen_population(@pop_lambda)
 
 	@population += new_population
+
+	percentage = (i * 100.0) / @iterations
+	if percentage > last_percentage + diff then
+		print "#{percentage}%..."
+		last_percentage = percentage
+	end
 end
+
+puts "100%!"
 
 @population.sort_by! { |g| -g[:fitness] }
 maze = @population.first
