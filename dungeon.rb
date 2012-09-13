@@ -22,12 +22,20 @@ class Dungeon
 				next if x < 0 or x == @width
 				next if y < 0 or y == @height
 				next if x == xs and y == ys
+				next if (x == xs - 1 or x == xs + 1) and (y == ys - 1 or y == ys + 1)
 
 				neighbors << c2i(x, y) if cell(x, y) == :floor
 			end
 		end
 
 		neighbors
+	end
+
+	def manhattan(from, to)
+		xf, yf = i2c(from)
+		xt, yt = i2c(to)
+
+		(xt - xf).abs + (yt - yf).abs
 	end
 
 	def to_s
@@ -51,11 +59,11 @@ class Dungeon
 					line += "-"
 				else
 					case c2i(x-1, y-1)
-					when @posa
+					when @a
 						line += "A"
-					when @posb
+					when @b
 						line += "B"
-					when @posc
+					when @c
 						line += "C"
 					else
 						line += cell_to_s(x - 1, y - 1)
@@ -67,7 +75,7 @@ class Dungeon
 		end
 
 		"[ #{@width}, #{@height}, #{@floorprobability} ]\n" +
-		"[ A: #{@posa}, B: #{@posb}, C: #{@posc} ]\n" +
+		"[ A: #{@a}, B: #{@b}, C: #{@c} ]\n" +
 		"#{maze}"
 	end
 
