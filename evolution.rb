@@ -3,7 +3,7 @@ load "astar.rb"
 
 @width = 10
 @height = 10
-@probability = 0.5
+@probability = 0.9
 
 def gen_population(size)
 	population = Array.new(size)
@@ -25,7 +25,8 @@ end
 
 @population = gen_population(@population_size)
 
-puts "iteration, maximum fitness"
+data = ""
+data += "iteration, maximum fitness\n"
 
 @iterations.times do |i|
 	# calculate fitness for population
@@ -47,7 +48,7 @@ puts "iteration, maximum fitness"
 
 	@population.sort_by! { |g| -g[:fitness] }
 
-	puts "#{i}, #{@population[0][:fitness]}"
+	data += "#{i}, #{@population[0][:fitness]}\n"
 
 	@population.pop(@pop_lambda)
 
@@ -57,5 +58,8 @@ puts "iteration, maximum fitness"
 end
 
 @population.sort_by! { |g| -g[:fitness] }
-puts @population.first
+maze = @population.first
 
+filename_suffix = "nomutate_nocrossover_prob_#{@probability}"
+File.open("data_#{suffix}.csv", "w") { |f| f.write(data) }
+File.open("maze_#{suffix}.txt", "w") { |f| f.write(maze) }
