@@ -11,6 +11,21 @@ class Dungeon
 		create!
 	end
 
+	def mutate(mutation_probability)
+		@tiles.map! do |tile|
+			if rand(nil) < mutation_probability then
+				if tile == :wall then
+					:floor
+				else
+					:wall
+				end
+			else
+				tile
+			end	
+		end
+
+		self
+	end
 
 	def neighbors(index)
 		xs, ys = i2c(index)

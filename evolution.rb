@@ -3,74 +3,104 @@ load "astar.rb"
 
 @width = 10
 @height = 10
-@probability = 0.9
+@probability = 0.1
+@mutate_probability = 0.1
 
 def gen_population(size)
 	population = Array.new(size)
 	size.times do |i|
-		population[i] = { :dungeon => Dungeon.new(@width, @height, @probability), :fitness => -1 }
+		population[i] = { :dungeon => Dungeon.new(@width, @height, @probability), :fitness => -1, :calculated => false }
 	end
 
 	population
 end
 
-# ensure that population is larger than or equal to micro + lambda
+def mutate_population(population, count)
+	pop = Marshal.load(Marshal.dump(population.take(count)))
+
+	pop.map! do |genome|
+		{ :dungeon => genome[:dungeon].mutate(@mutate_probability),
+			:fitness => -1,
+			:calculated => false
+		}
+	end
+
+	pop
+end
+
 @population_size = 100
-@pop_micro = 50
-@pop_lambda = 50
+@pop_worst_count = 50
+
+# if the following numbers combined are not less than @pop_worst_count, the array will be truncated
+@pop_mutate_count = 20
+# end numbers
 
 @iterations = 1000
 
-#
-
 @population = gen_population(@population_size)
 
-data = ""
-data += "iteration, maximum fitness\n"
+data = "iteration, maximum fitness\n"
 
-last_percentage = 0.0
-diff = 9
+last_iteration = 0
+diff = 100
 
 @iterations.times do |i|
 	# calculate fitness for population
 	@population.map! do |genome|
+		# the unchanged dungeons don't need to be updated
+		genome if genome[:calculated] == true
+
 		d = genome[:dungeon]
 
-		ab = AStar.pathlength(d, d.a, d.b)
-		bc = AStar.pathlength(d, d.b, d.c)
-		ca = AStar.pathlength(d, d.c, d.a)
-
-		if ab < 0 or bc < 0 or ca < 0 then
+		if d.a == nil or d.b == nil or d.b == nil
 			genome[:fitness] = -1
 		else
-			genome[:fitness] = ab + bc + ca
+			ab = AStar.pathlength(d, d.a, d.b)
+			bc = AStar.pathlength(d, d.b, d.c)
+			ca = AStar.pathlength(d, d.c, d.a)
+
+			if ab < 0 or bc < 0 or ca < 0 then
+				genome[:fitness] = -1
+			else
+				genome[:fitness] = ab + bc + ca
+			end
 		end
+
+		genome[:calculated] = true
 
 		genome
 	end
 
 	@population.sort_by! { |g| -g[:fitness] }
 
-	data += "#{i}, #{@population[0][:fitness]}\n"
+	data += "#{i}, #{@population.first[:fitness]}\n"
 
-	@population.pop(@pop_lambda)
+	# throw away the worst
+	@population.pop(@pop_worst_count)
 
-	new_population = gen_population(@pop_lambda)
+	# mutate
+	@population += mutate_population(@population, @pop_mutate_count)
 
-	@population += new_population
+	# truncate population if there are too many genomes in it
+	if @population.size > @population_size then
+		@population.pop(@population.size - @populationsize)
+	else
+		# generate some new dungeons to maintain variety
+		@population += gen_population(@population_size - @population.size)
+	end
 
-	percentage = (i * 100.0) / @iterations
-	if percentage > last_percentage + diff then
-		print "#{percentage}%..."
-		last_percentage = percentage
+
+	if i >= last_iteration + diff
+		print "#{i}.."
+		last_iteration = i
 	end
 end
 
-puts "100%!"
+puts "#{@iterations}!"
 
 @population.sort_by! { |g| -g[:fitness] }
 maze = @population.first
 
-filename_suffix = "nomutate_nocrossover_prob_#{@probability}"
-File.open("data_#{suffix}.csv", "w") { |f| f.write(data) }
-File.open("maze_#{suffix}.txt", "w") { |f| f.write(maze) }
+filename_suffix = "nocrossover_mutateprob_#{@mutate_probability}_wallprob_#{@probability}"
+File.open("data_#{filename_suffix}.csv", "w") { |f| f.write(data) }
+File.open("maze_#{filename_suffix}.txt", "w") { |f| f.write(maze) }
