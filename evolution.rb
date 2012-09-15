@@ -28,11 +28,25 @@ def mutate_population(population, count)
 	pop
 end
 
+def crossover_population(population, parentcount)
+	pop = Marshal.load(Marshal.dump(population.take(parentcount)))
+
+	children = []
+
+	pop.each_slice(2) do |ps|
+		children << Dungeon.crossover(ps[0], ps[1])
+	end
+
+	children
+end
+
 @population_size = 100
 @pop_worst_count = 50
 
-# if the following numbers combined are not less than @pop_worst_count, the array will be truncated
+# if the following numbers combined are not less than or equal @pop_worst_count, the array will be truncated
+# if the numbers combined are less than @pop_worst_count, the remaining places will be filled with new genomes
 @pop_mutate_count = 20
+@pop_crossover_parent_count = 30 # will result in (count / 2) children
 # end numbers
 
 @iterations = 1000
@@ -77,6 +91,9 @@ diff = 100
 
 	# throw away the worst
 	@population.pop(@pop_worst_count)
+
+	# crossover
+	@population += crossover_population(@population, @pop_crossover_count)
 
 	# mutate
 	@population += mutate_population(@population, @pop_mutate_count)

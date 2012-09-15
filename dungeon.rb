@@ -27,6 +27,10 @@ class Dungeon
 		self
 	end
 
+	def self.crossover(d1, d2)
+		d1
+	end
+
 	def neighbors(index)
 		xs, ys = i2c(index)
 
