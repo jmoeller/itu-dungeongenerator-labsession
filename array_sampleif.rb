@@ -10,7 +10,7 @@ class Array
 	def sampleindexif
 		begin
 			index = rand(self.length)
-		end until yield(self[index], index)
+		end until yield(self[index])
 		
 		index
 	end

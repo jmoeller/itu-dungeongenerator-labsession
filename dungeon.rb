@@ -34,9 +34,9 @@ class Dungeon
 		d1c = Marshal.load(Marshal.dump(d1))
 		d2c = Marshal.load(Marshal.dump(d2))
 
-		floorprobability = (d1c.floorprobability + d2c.floorprobability) / 2.0
+		floorprob = (d1c.floorprobability + d2c.floorprobability) / 2.0
 
-		child = Dungeon.new(d1c.width, d1c.height, floorprobability)
+		child = Dungeon.new(d1c.width, d1c.height, floorprob)
 
 		d1c.width.times do |x|
 			d1c.height.times do |y|
@@ -145,7 +145,11 @@ class Dungeon
 	def setmarkers
 		@a = @tiles.index(:floor) unless @a
 		@c = @tiles.rindex(:floor) unless @c
-		@b = @tiles.sampleindexif { |t, i| t == :floor and i != @a and i != @c } unless @b
+		unless @b then
+			begin
+				@b = @tiles.sampleindexif { |t| t == :floor }
+			end until @b != @a and @b != @c
+		end
 	end
 
 	def create!
