@@ -36,7 +36,7 @@ def crossover_population(population, parentcount)
 	children = []
 
 	pop.each_slice(2) do |ps|
-		children << Dungeon.crossover(ps[0], ps[1])
+		children << Dungeon.crossover(ps[0], ps[1], @xswitch, @yswitch)
 	end
 
 	children
@@ -95,7 +95,7 @@ diff = 100
 	@population.pop(@pop_worst_count)
 
 	# crossover
-	@population += crossover_population(@population, @pop_crossover_count)
+	@population += crossover_population(@population, @pop_crossover_parent_count)
 
 	# mutate
 	@population += mutate_population(@population, @pop_mutate_count)
@@ -120,6 +120,6 @@ puts "#{@iterations}!"
 @population.sort_by! { |g| -g[:fitness] }
 maze = @population.first
 
-filename_suffix = "nocrossover_mutateprob_#{@mutate_probability}_wallprob_#{@probability}"
+filename_suffix = "crossover_mutateprob_#{@mutate_probability}_wallprob_#{@probability}"
 File.open("data_#{filename_suffix}.csv", "w") { |f| f.write(data) }
 File.open("maze_#{filename_suffix}.txt", "w") { |f| f.write(maze) }
