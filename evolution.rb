@@ -51,7 +51,7 @@ end
 @pop_crossover_parent_count = 30 # will result in (count / 2) children
 # end numbers
 
-@iterations = 1000
+@iterations = 100
 
 @population = gen_population(@population_size)
 
