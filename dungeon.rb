@@ -1,3 +1,5 @@
+load "array_sampleif.rb"
+
 class Dungeon
 	attr_reader :tiles, :a, :b, :c, :width, :height, :floorprobability
 
@@ -27,8 +29,33 @@ class Dungeon
 		self
 	end
 
-	def self.crossover(d1, d2)
-		d1
+	# assumes that the two dungeons are of the same size
+	def self.crossover(d1, d2, xpart, ypart)
+		d1c = Marshal.load(Marshal.dump(d1))
+		d2c = Marshal.load(Marshal.dump(d2))
+
+		floorprobability = (d1c.floorprobability + d2c.floorprobability) / 2.0
+
+		child = Dungeon.new(d1c.width, d1c.height, floorprobability)
+
+		d1c.width.times do |x|
+			d1c.height.times do |y|
+				xid = x / xpart % 2 == 0
+				yid = y / ypart % 2 == 0
+
+				if xid ^ yid then
+					current_parent = d2c
+				else
+					current_parent = d1c
+				end
+
+				child.settile(x, y, current_parent.tile(x, y))
+			end
+		end
+
+		child.setmarkers!
+
+		child
 	end
 
 	def neighbors(index)
@@ -55,6 +82,14 @@ class Dungeon
 		xt, yt = i2c(to)
 
 		(xt - xf).abs + (yt - yf).abs
+	end
+
+	def settile(x, y, tile)
+		@tiles[c2i(x, y)] = tile
+	end
+
+	def tile(x, y)
+		@tiles[c2i(x, y)]
 	end
 
 	def to_s
@@ -98,7 +133,20 @@ class Dungeon
 		"#{maze}"
 	end
 
+	def setmarkers!
+		@a = @b = @c = nil
+
+		setmarkers
+	end
+
+
 	private
+
+	def setmarkers
+		@a = @tiles.index(:floor) unless @a
+		@c = @tiles.rindex(:floor) unless @c
+		@b = @tiles.sampleindexif { |t, i| t == :floor and i != @a and i != @c } unless @b
+	end
 
 	def create!
 		prob = @floorprobability || 0.5
@@ -112,9 +160,6 @@ class Dungeon
 			end
 		end
 
-		@a = floortiles.shift
-		@c = floortiles.pop
-		@b = floortiles.sample
 	end
 
 	def c2i(x, y)

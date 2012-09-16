@@ -5,6 +5,8 @@ load "astar.rb"
 @height = 10
 @probability = 0.1
 @mutate_probability = 0.1
+@xswitch = 5
+@yswitch = 5
 
 def gen_population(size)
 	population = Array.new(size)
