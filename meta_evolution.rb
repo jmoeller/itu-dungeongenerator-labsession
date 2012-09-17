@@ -43,8 +43,8 @@ class MetaEvolution
 		a[CROSSOVER_BLOCK_WIDTH] = crossover_block_width
 		a[CROSSOVER_BLOCK_HEIGHT] = crossover_block_height
 		a[POPULATION_KILL_COUNT] = population_kill_count
-		a[POPULATION_MUTATE_COUNT] = population_mutate_count
-		a[POPULATION_CROSSOVER_COUNT] = population_crossover_count
+		a[POPULATION_MUTATE_COUNT] = population_mutate_count(a[POPULATION_KILL_COUNT])
+		a[POPULATION_CROSSOVER_COUNT] = population_crossover_count(a[POPULATION_KILL_COUNT])
 		a
 	end
 
