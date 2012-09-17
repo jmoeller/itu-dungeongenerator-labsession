@@ -105,7 +105,7 @@ class Evolution
 		folder = @folder + "/" || ""
 
 		File.open("#{folder}data_#{@filename}.csv", "w") { |f| f.write(data) }
-		File.open("maze_#{@filename}.txt", "w") { |f| f.write(maze) }
+		File.open("#{folder}maze_#{@filename}.txt", "w") { |f| f.write(maze) }
 
 		maze[:fitness]
 	end
