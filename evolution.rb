@@ -30,7 +30,7 @@ class Evolution
 		@filename += "crossover-#{@population_crossover_count}-#{@crossover_block_width}-#{@crossover_block_height}_"
 		@filename += "mutate-#{@population_mutate_count}-#{@mutate_probability}"
 
-		@folder = "meta"
+		@folder = "metaresults"
 
 		if @population_kill_count < (@population_mutate_count + @population_crossover_count) then
 			@fitness = -1
