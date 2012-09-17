@@ -6,19 +6,20 @@ class Evolution
 		:population_kill_count, :population_mutate_count, :population_crossover_count,
 		:fitness
 
-	def initialize(floor_probability, mutate_probability, crossover_block_width, crossover_block_height,
+	def initialize(population_size, width, height, iterations,
+		       floor_probability, mutate_probability, crossover_block_width, crossover_block_height,
 		       population_kill_count, population_mutate_count, population_crossover_count)
 
-		@width = 10
-		@height = 10
+		@width = width
+		@height = height
 
 		@floor_probability = floor_probability
 		@mutate_probability = mutate_probability
 		@crossover_block_width = crossover_block_width
 		@crossover_block_height = crossover_block_height
 
-		@population_size = 100
-		@iterations = 100
+		@population_size = population_size
+		@iterations = iterations
 
 		@population_kill_count = population_kill_count
 		@population_mutate_count = population_mutate_count
@@ -143,5 +144,3 @@ class Evolution
 	end
 
 end
-
-Evolution.new(0.7, 0.1, 5, 5, 50, 20, 15)
