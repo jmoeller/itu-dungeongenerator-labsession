@@ -10,14 +10,21 @@ class MetaEvolution
 
 		# meta
 		@meta_population_size = 100
-		@meta_iterations = 100
+		@meta_iterations = 1
 
 		
 		@population = create_population(@meta_population_size)
-		@population.sort_by! { |g| -g.fitness }
 
-		@population.each do |g|
-			puts "#{g.fitness} - #{g.genome}"
+		@meta_iterations.times do
+			@population.delete_if { |g| g[:fitness] < 0 }
+			@population.sort_by! { |g| -g[:fitness] }
+
+			# TODO: mutate
+			
+			# TODO: crossover
+
+			# fill up the population
+			@population += create_population(@population_size - @population.size)
 		end
 	end
 
@@ -34,11 +41,9 @@ class MetaEvolution
 	def create_population(size)
 		Array.new(size) do |i|
 			g = random_genome
-			print "#{i}: #{g}: "
 			f = create_evolution(g).fitness
-			{ :fitness => f, :genome => g }
 
-			puts "#{f}"
+			{ :fitness => f, :genome => g }
 		end
 	end
 
