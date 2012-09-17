@@ -107,12 +107,11 @@ class Evolution
 	end
 
 	def gen_population(size)
-		population = Array.new(size)
-		size.times do |i|
-			population[i] = { :dungeon => Dungeon.new(@width, @height, @floor_probability), :fitness => -1, :calculated => false }
-		end
-
-		population
+		Array.new(size) { |i| {
+			:dungeon => Dungeon.new(@width, @height, @floor_probability),
+			:fitness => -1,
+			:calculated => false
+		} }
 	end
 
 	def mutate_population(population, count)
