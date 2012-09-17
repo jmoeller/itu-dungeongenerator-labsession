@@ -105,8 +105,8 @@ class Evolution
 		if maze[:fitness] > 0 then
 			folder = @folder + "/" || ""
 
-			File.open("#{folder}data_#{@filename}.csv", "w") { |f| f.write(data) }
-			File.open("#{folder}maze_#{@filename}.txt", "w") { |f| f.write(maze) }
+			File.open("#{folder}data_#{maze[:fitness]}_#{@filename}.csv", "w") { |f| f.write(data) }
+			File.open("#{folder}maze_#{maze[:fitness]}_#{@filename}.txt", "w") { |f| f.write(maze) }
 		end
 
 		maze[:fitness]
