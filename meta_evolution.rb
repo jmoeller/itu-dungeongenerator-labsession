@@ -12,8 +12,10 @@ class MetaEvolution
 		@meta_population_size = 100
 		@meta_iterations = 100
 
-		e = create_evolution([0.7, 0.1, 3, 3, 50, 20, 15])
-		puts e.fitness
+		
+		@population = create_population(@meta_population_size)
+		@population.sort_by! { |g| -g.fitness }
+		puts @population.first.fitness
 
 		@meta_iterations.times do |i|
 
