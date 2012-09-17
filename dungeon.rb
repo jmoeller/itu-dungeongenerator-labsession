@@ -1,5 +1,3 @@
-load "array_sampleif.rb"
-
 class Dungeon
 	attr_reader :tiles, :a, :b, :c, :width, :height, :floorprobability
 
@@ -146,9 +144,18 @@ class Dungeon
 		@a = @tiles.index(:floor) unless @a
 		@c = @tiles.rindex(:floor) unless @c
 		unless @b then
-			begin
-				@b = @tiles.sampleindexif { |t| t == :floor }
-			end until @b != @a and @b != @c
+			@b = nil
+
+			@tiles.length.times do
+				index = rand(@tiles.length)
+
+				if index == @a or index == @c or @tiles[index] == :wall
+					next
+				else
+					@b = index
+					break
+				end
+			end
 		end
 	end
 

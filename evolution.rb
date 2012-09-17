@@ -134,14 +134,23 @@ class Evolution
 	end
 
 	def crossover_population(population, parentcount)
-		pop = Marshal.load(Marshal.dump(population.take(parentcount)))
+		pop = population.take(parentcount)
 
 		children = []
 
 		pop.each_slice(2) do |ps|
+			d = Dungeon.crossover(ps[0][:dungeon], ps[1][:dungeon], @crossover_block_width, @crossover_block_height)
+
+			# if the markers couldn't be placed in the child,
+			# the dungeon isn't valid and don't need to have its fitness calculated
+			if d.a == nil or d.b == nil or d.c == nil then
+				calculated = true
+			else
+				calculated = false
+			end
+
 			children << {
-				:dungeon => Dungeon.crossover(ps[0][:dungeon], ps[1][:dungeon], @crossover_block_width, @crossover_block_height),
-				:fitness => -1, :calculated => false
+				:dungeon => d, :fitness => -1, :calculated => calculated
 			}
 		end
 

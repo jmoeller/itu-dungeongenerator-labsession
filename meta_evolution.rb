@@ -14,14 +14,10 @@ class MetaEvolution
 
 		
 		@population = create_population(@meta_population_size)
-		@population.sort_by! { |g| -g.evolution.fitness }
+		@population.sort_by! { |g| -g.fitness }
 
 		@population.each do |g|
-			puts "#{g.evolution.fitness} - #{g.genome}"
-		end
-
-		@meta_iterations.times do |i|
-
+			puts "#{g.fitness} - #{g.genome}"
 		end
 	end
 
@@ -38,7 +34,11 @@ class MetaEvolution
 	def create_population(size)
 		Array.new(size) do |i|
 			g = random_genome
-			{ :evolution => create_evolution(g), :genome => g }
+			print "#{i}: #{g}: "
+			f = create_evolution(g).fitness
+			{ :fitness => f, :genome => g }
+
+			puts "#{f}"
 		end
 	end
 
