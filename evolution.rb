@@ -30,6 +30,8 @@ class Evolution
 		@filename += "crossover-#{@population_crossover_count}-#{@crossover_block_width}-#{@crossover_block_height}_"
 		@filename += "mutate-#{@population_mutate_count}-#{@mutate_probability}"
 
+		@folder = "meta"
+
 		if @population_kill_count < (@population_mutate_count + @population_crossover_count) then
 			@fitness = -1
 		elsif @population_kill_count >= @population_size then
@@ -100,7 +102,9 @@ class Evolution
 		@population.sort_by! { |g| -g[:fitness] }
 		maze = @population.first
 
-		File.open("data_#{@filename}.csv", "w") { |f| f.write(data) }
+		folder = @folder + "/" || ""
+
+		File.open("#{folder}data_#{@filename}.csv", "w") { |f| f.write(data) }
 		File.open("maze_#{@filename}.txt", "w") { |f| f.write(maze) }
 
 		maze[:fitness]
