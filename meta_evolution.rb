@@ -14,8 +14,11 @@ class MetaEvolution
 
 		
 		@population = create_population(@meta_population_size)
-		@population.sort_by! { |g| -g.fitness }
-		puts @population.first.fitness
+		@population.sort_by! { |g| -g.evolution.fitness }
+
+		@population.each do |g|
+			puts "#{g.evolution.fitness} - #{g.genome}"
+		end
 
 		@meta_iterations.times do |i|
 
@@ -33,7 +36,10 @@ class MetaEvolution
 	POPULATION_CROSSOVER_COUNT = 6
 
 	def create_population(size)
-		Array.new(size) { |i| create_evolution(random_genome) }
+		Array.new(size) do |i|
+			g = random_genome
+			{ :evolution => create_evolution(g), :genome => g }
+		end
 	end
 
 	def random_genome
