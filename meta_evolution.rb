@@ -13,17 +13,19 @@ class MetaEvolution
 		@meta_iterations = 100
 		@meta_mutate_probability = 0.2
 		@meta_mutate_count = 20
-		@meta_crossover_parent_count = 10
+		@meta_crossover_count = 10
+		@meta_kill_count = 50
 		
 		@population = create_population(@meta_population_size)
+		sort_population
 
 		@meta_iterations.times do
-			@population += mutate_population(@population, @meta_mutate_count)
-			
-			@population += crossover_population(@population, @meta_crossover_parent_count * 2)
-
+			@population.pop(@meta_kill_count)
 			# delete unnecessary genomes
 			@population.delete_if { |g| g[:fitness] < 0 }
+
+			@population += mutate_population(@population, @meta_mutate_count)
+			@population += crossover_population(@population, @meta_crossover_count * 2)
 
 			if @population.size > @population_size then
 				@population.pop(@population.size - @population_size)
@@ -32,8 +34,10 @@ class MetaEvolution
 				@population += create_population(@population_size - @population.size)
 			end
 
-			@population.sort_by! { |g| -g[:fitness] }
+			sort_population
 		end
+
+		puts "Best iteration found: #{@population.first[:fitness]}. Genome: #{@population.first[:genome]}"
 	end
 
 	private
@@ -45,6 +49,10 @@ class MetaEvolution
 	POPULATION_KILL_COUNT = 4
 	POPULATION_MUTATE_COUNT = 5
 	POPULATION_CROSSOVER_COUNT = 6
+
+	def sort_population
+		@population.sort_by! { |g| -g[:fitness] }
+	end
 
 	def mutate_population(population, count)
 		count = population.count if count > population.count
