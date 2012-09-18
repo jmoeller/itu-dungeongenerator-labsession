@@ -10,7 +10,7 @@ class MetaEvolution
 
 		# meta
 		@meta_population_size = 100
-		@meta_iterations = 1
+		@meta_iterations = 10
 		@meta_mutate_probability = 0.2
 		@meta_mutate_count = 20
 		@meta_crossover_parent_count = 10
@@ -73,11 +73,13 @@ class MetaEvolution
 	end
 
 	def crossover_population(population, parent_count)
+		pop = Marshal.load(Marshal.dump(population.take(parent_count)))
+
 		children = []
 
 		return children if parent_count > population.count
 
-		pop.take(parent_count).each_slice(2) do |ps|
+		pop.each_slice(2) do |ps|
 			break if ps[0] == nil or ps[1] == nil
 
 			g1 = ps[0][:genome]
