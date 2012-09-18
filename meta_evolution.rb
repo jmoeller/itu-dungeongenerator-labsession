@@ -22,6 +22,9 @@ class MetaEvolution
 			
 			@population += crossover_population(@population, @meta_crossover_parent_count * 2)
 
+			# delete unnecessary genomes
+			@population.delete_if { |g| g[:fitness] < 0 }
+
 			if @population.size > @population_size then
 				@population.pop(@population.size - @population_size)
 			else
