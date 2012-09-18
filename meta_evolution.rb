@@ -47,7 +47,7 @@ class MetaEvolution
 	POPULATION_CROSSOVER_COUNT = 6
 
 	def mutate_population(population, count)
-		return [] if count > population.count
+		count = population.count if count > population.count
 
 		pop = Marshal.load(Marshal.dump(population.take(count)))
 
@@ -83,6 +83,11 @@ class MetaEvolution
 	end
 
 	def crossover_population(population, parent_count)
+		if parent_count > population.count then
+			# highest even number which is less than popcount
+			parent_count = population.count / 2 * 3
+		end
+
 		pop = Marshal.load(Marshal.dump(population.take(parent_count)))
 
 		children = []
