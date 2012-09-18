@@ -10,7 +10,7 @@ class MetaEvolution
 
 		# meta
 		@meta_population_size = 100
-		@meta_iterations = 10
+		@meta_iterations = 100
 		@meta_mutate_probability = 0.2
 		@meta_mutate_count = 20
 		@meta_crossover_parent_count = 10
@@ -18,14 +18,16 @@ class MetaEvolution
 		@population = create_population(@meta_population_size)
 
 		@meta_iterations.times do
-			@population.delete_if { |g| g[:fitness] < 0 }
-
 			@population += mutate_population(@population, @meta_mutate_count)
 			
 			@population += crossover_population(@population, @meta_crossover_parent_count * 2)
 
-			# fill up the population to the cap
-			@population += create_population(@population_size - @population.size)
+			if @population.size > @population_size then
+				@population.pop(@population.size - @population_size)
+			else
+				# fill up the population to the cap
+				@population += create_population(@population_size - @population.size)
+			end
 
 			@population.sort_by! { |g| -g[:fitness] }
 		end
@@ -54,12 +56,17 @@ class MetaEvolution
 					int = g.is_a? Integer
 
 					# between + and - 10%
-					mutation_amount = (rand(nil) * 3.0 - 1.0) / 10.0
+					mutation_amount = (rand(nil) * 2.0 - 1.0) / 10.0
 
-					g += mutation_amount * g
+					g = g + mutation_amount * g
 
 					if int then
 						g = g.round
+
+						# prevent negative or zerolength arrays
+						if g < 1 then
+							g = 1
+						end
 					end
 
 					g
@@ -93,6 +100,10 @@ class MetaEvolution
 				# preserve the original types
 				if g1[i].is_a? Integer then
 					c = c.round
+
+					if c < 1 then
+						c = 1
+					end
 				end
 
 				child_genome << c
