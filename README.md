@@ -14,7 +14,8 @@ wall.
 The three points are then positioned. *A* on the first available floor tile,
 *C* on the last available floor tile, while *B* is placed on a random floor
 tile inbetween. If there is no path from *A* to *B* to *C* the dungeon is
-invalid and its fitness is *-1*. Otherwise the fitness is the pathlength.
+invalid and its fitness is *-1*. Otherwise the fitness is the pathlength. The
+pathlength is found with A\*.
 
 
 ## Evolution
@@ -84,3 +85,19 @@ creating entirely new iterations.
 
 
 ## Results
+
+So far (Sep 18th 2012), the following dungeon is the best one found. It has a
+fitness value of 107.
+
+    +----------+
+    |A  XXB  X |
+    |XX   XX  X|
+    |   X  XX X|
+    | XX   X   |
+    |   XX  XX |
+    |     X    |
+    |XXX XXXXXX|
+    |    X     |
+    | XXX   X  |
+    |     X  XC|
+    +----------+
