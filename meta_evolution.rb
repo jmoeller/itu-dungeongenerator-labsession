@@ -11,20 +11,23 @@ class MetaEvolution
 		# meta
 		@meta_population_size = 100
 		@meta_iterations = 1
-
+		@meta_mutate_probability = 0.2
+		@meta_mutate_count = 20
+		@meta_crossover_parent_count = 10
 		
 		@population = create_population(@meta_population_size)
 
 		@meta_iterations.times do
 			@population.delete_if { |g| g[:fitness] < 0 }
-			@population.sort_by! { |g| -g[:fitness] }
 
-			# TODO: mutate
+			@population += mutate_population(@population, @meta_mutate_count)
 			
-			# TODO: crossover
+			@population += crossover_population(@population, @meta_crossover_parent_count * 2)
 
-			# fill up the population
+			# fill up the population to the cap
 			@population += create_population(@population_size - @population.size)
+
+			@population.sort_by! { |g| -g[:fitness] }
 		end
 	end
 
@@ -37,6 +40,69 @@ class MetaEvolution
 	POPULATION_KILL_COUNT = 4
 	POPULATION_MUTATE_COUNT = 5
 	POPULATION_CROSSOVER_COUNT = 6
+
+	def mutate_population(population, count)
+		return [] if count > population.count
+
+		pop = Marshal.load(Marshal.dump(population.take(count)))
+
+		pop.map do |p|
+			if rand(nil) < @meta_mutate_probability then
+				genome = p[:genome]
+
+				genome.map! do |g|
+					int = g.is_a? Integer
+
+					# between + and - 10%
+					mutation_amount = (rand(nil) * 3.0 - 1.0) / 10.0
+
+					g += mutation_amount * g
+
+					if int then
+						g = g.round
+					end
+
+					g
+				end
+
+				{ :genome => genome, :fitness => create_evolution(genome).fitness }
+			else
+				p
+			end
+		end
+	end
+
+	def crossover_population(population, parent_count)
+		children = []
+
+		return children if parent_count > population.count
+
+		pop.take(parent_count).each_slice(2) do |ps|
+			break if ps[0] == nil or ps[1] == nil
+
+			g1 = ps[0][:genome]
+			g2 = ps[1][:genome]
+
+			child_genome = []
+
+			g1.length.times do |i|
+				c = (g1[i] + g2[i]) / 2.0
+
+				# preserve the original types
+				if g1[i].is_a? Integer then
+					c = c.round
+				end
+
+				child_genome << c
+			end
+
+			fitness = create_evolution(child_genome).fitness
+
+			children << { :genome => child_genome, :fitness => fitness }
+		end
+
+		children
+	end
 
 	def create_population(size)
 		Array.new(size) do |i|
