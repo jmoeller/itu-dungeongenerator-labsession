@@ -134,7 +134,7 @@ class Evolution
 	end
 
 	def crossover_population(population, parentcount)
-		pop = population.take(parentcount)
+		pop = Marshal.load(Marshal.dump(population.take(parentcount)))
 
 		children = []
 
