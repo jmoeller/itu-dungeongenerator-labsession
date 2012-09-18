@@ -15,7 +15,8 @@ The three points are then positioned. *A* on the first available floor tile,
 *C* on the last available floor tile, while *B* is placed on a random floor
 tile inbetween. If there is no path from *A* to *B* to *C* the dungeon is
 invalid and its fitness is *-1*. Otherwise the fitness is the pathlength. The
-pathlength is found with A\*.
+pathlength is found with A\*. Because of the dungeon layout, I decided that it
+shouldn't be possible to walk diagonally when navigating through the dungeon.
 
 
 ## Evolution
