@@ -102,3 +102,15 @@ fitness value of 107.
     | XXX   X  |
     |     X  XC|
     +----------+
+
+
+## Further work
+
+If this dungeon generater were to be improved, I think its major shortcoming is
+the genome for a single dungeon. The 1:1 mapping between genotype and phenotype
+results in a too large search space. Another appropriate genotype, instead of
+the underlying wall/floor array, should still keep a high degree of locality,
+but a decrease in search space size could allow for more extensive searches and
+thereby better dungeons.
+
+(Note: I won't be improving this any furter :))
